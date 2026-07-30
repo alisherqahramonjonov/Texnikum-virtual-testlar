@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Test Hub - Interaktiv Test Platformasi</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <a href="#" class="logo" id="logo-home">
+        <span class="logo-icon">T</span>
+        Smart Test Hub
+      </a>
+      <nav id="main-nav">
+        <button class="btn-nav active" data-target="home-view">Bosh sahifa</button>
+        <button class="btn-nav" data-target="creator-view">O'qituvchi paneli</button>
+        <button class="btn-nav" data-target="runner-view" id="nav-runner" style="display: none;">Testni bajarish</button>
+        <button class="btn-nav" data-target="result-view" id="nav-result" style="display: none;">Natija</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+      <span id="toast-text">Muvaffaqiyatli!</span>
+    </div>
+
+    <!-- 1. HOME VIEW -->
+    <section id="home-view" class="view-section active">
+      <div class="hero">
+        <h1>Interaktiv Test Platformasi</h1>
+        <p>O'qituvchilar uchun tezkor test yaratish va o'quvchilar natijalarini kuzatish uchun qulay tizim.</p>
+        
+        <div class="home-options">
+          <!-- Teacher Card -->
+          <div class="option-card" id="card-teacher">
+            <div class="option-icon">👨‍🏫</div>
+            <h2>O'qituvchi</h2>
+            <p>Yangi test yarating, vaqt limitini belgilang va o'quvchilarga havola (link) ulashing.</p>
+            <button class="btn btn-primary">Test Yaratish</button>
+          </div>
+          
+          <!-- Student Card -->
+          <div class="option-card student" id="card-student">
+            <div class="option-icon">🎓</div>
+            <h2>O'quvchi</h2>
+            <p>O'qituvchi bergan havola orqali testlarni topshiring va o'z bilimingizni tekshiring.</p>
+            <div class="import-box" id="student-import-box" style="margin-top: 1rem; width: 100%;">
+              <div class="import-icon">📥</div>
+              <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">Test faylini yuklang (.json)</p>
+              <input type="file" id="file-test-import" class="file-input" accept=".json">
+              <button class="btn btn-secondary btn-sm" id="btn-select-test-file">Fayl tanlash</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teacher Results Viewer Option -->
+        <div class="card" style="margin-top: 2rem; text-align: left;">
+          <h3>Natijalarni tekshirish (O'qituvchi uchun)</h3>
+          <p style="margin-bottom: 1rem;">O'quvchi yuborgan natija havolasini (link) kiriting yoki natija faylini yuklang.</p>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <input type="text" id="result-link-input" class="form-control" placeholder="Natija havolasini kiriting (masalan: ?result=...)" style="flex: 1; min-width: 250px;">
+            <button class="btn btn-primary" id="btn-view-result-link">Natijani ko'rish</button>
+          </div>
+          <div style="text-align: center; margin: 1rem 0; color: var(--text-secondary);">yoki</div>
+          <div class="import-box" id="result-import-box">
+            <div class="import-icon">📊</div>
+            <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">O'quvchi natija faylini yuklang (.json)</p>
+            <input type="file" id="file-result-import" class="file-input" accept=".json">
+            <button class="btn btn-secondary btn-sm" id="btn-select-result-file">Fayl tanlash</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. CREATOR VIEW -->
+    <section id="creator-view" class="view-section">
+      <div class="creator-header">
+        <h2>Yangi test yaratish</h2>
+        <button class="btn btn-secondary btn-sm" id="btn-clear-test">Tozalash</button>
+      </div>
+
+      <!-- Test Metadata -->
+      <div class="card">
+        <h3>1. Test ma'lumotlari</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="test-title">Test sarlavhasi</label>
+            <input type="text" id="test-title" class="form-control" placeholder="Masalan: Fizika asoslari" value="Yangi Test">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="test-duration">Vaqt limiti (daqiqa)</label>
+            <input type="number" id="test-duration" class="form-control" placeholder="Cheksiz bo'lsa bo'sh qoldiring" value="20" min="1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="test-author">O'qituvchi ismi</label>
+          <input type="text" id="test-author" class="form-control" placeholder="Ismingizni kiriting" value="O'qituvchi">
+        </div>
+      </div>
+
+      <!-- Question Builder -->
+      <div class="card question-builder-card">
+        <div class="question-header">
+          <h3>2. Savol qo'shish</h3>
+          <span class="question-number" id="builder-q-number">Savol #1</span>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="question-text-input">Savol matni</label>
+          <textarea id="question-text-input" class="form-control" rows="3" placeholder="Savolni shu yerga yozing..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Variantlar va to'g'ri javob</label>
+          <div class="options-builder">
+            <div class="option-builder-row">
+              <input type="radio" name="correct-option" value="0" checked class="radio-custom" title="A variantini to'g'ri deb belgilash">
+              <input type="text" id="option-a" class="form-control" placeholder="A varianti">
+            </div>
+            <div class="option-builder-row">
+              <input type="radio" name="correct-option" value="1" class="radio-custom" title="B variantini to'g'ri deb belgilash">
+              <input type="text" id="option-b" class="form-control" placeholder="B varianti">
+            </div>
+            <div class="option-builder-row">
+              <input type="radio" name="correct-option" value="2" class="radio-custom" title="C variantini to'g'ri deb belgilash">
+              <input type="text" id="option-c" class="form-control" placeholder="C varianti">
+            </div>
+            <div class="option-builder-row">
+              <input type="radio" name="correct-option" value="3" class="radio-custom" title="D variantini to'g'ri deb belgilash">
+              <input type="text" id="option-d" class="form-control" placeholder="D varianti">
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: right; margin-top: 1.5rem;">
+          <button class="btn btn-primary" id="btn-add-question">Savolni ro'yxatga qo'shish</button>
+        </div>
+      </div>
+
+      <!-- Created Questions List -->
+      <div class="card">
+        <h3>Savollar ro'yxati (<span id="questions-count">0</span> ta savol)</h3>
+        <div class="questions-list" id="questions-list-container">
+          <p style="text-align: center; font-style: italic; color: var(--text-secondary); margin: 2rem 0;">Hozircha hech qanday savol qo'shilmadi.</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="card test-sharing-card" id="sharing-section" style="display: none;">
+        <h3>3. Testni ulashish</h3>
+        <p>Testni o'quvchilarga yuborish uchun quyidagi tugmalardan birini ishlating:</p>
+        
+        <div class="share-link-container">
+          <input type="text" id="share-link-input" class="form-control share-link-input" readonly>
+          <button class="btn btn-primary" id="btn-copy-link">Havolani nusxalash</button>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+          <button class="btn btn-secondary" style="flex: 1;" id="btn-download-test">Testni fayl sifatida yuklab olish (.json)</button>
+        </div>
+      </div>
+
+      <!-- Generate Test Trigger -->
+      <div style="margin-bottom: 3rem;">
+        <button class="btn btn-primary btn-block" style="font-size: 1.1rem; padding: 1rem;" id="btn-generate-test">Testni yakunlash va havola yaratish</button>
+      </div>
+    </section>
+
+    <!-- 3. STUDENT RUNNER VIEW -->
+    <section id="runner-view" class="view-section">
+      <!-- Welcome Screen (Pre-quiz) -->
+      <div class="card" id="student-welcome-card">
+        <h2 id="welcome-test-title">Test yuklanmoqda...</h2>
+        <p id="welcome-test-desc">O'qituvchi: <strong id="welcome-author">...</strong> | Savollar: <strong id="welcome-q-count">...</strong> ta | Vaqt: <strong id="welcome-duration">...</strong> daqiqa</p>
+        
+        <div class="form-group">
+          <label class="form-label" for="student-name">Ism va familiyangizni kiriting</label>
+          <input type="text" id="student-name" class="form-control" placeholder="Ism familiya">
+        </div>
+        
+        <button class="btn btn-primary btn-block" id="btn-start-quiz">Testni boshlash</button>
+      </div>
+
+      <!-- Active Quiz Screen -->
+      <div id="active-quiz-container" style="display: none;">
+        <div class="quiz-meta">
+          <h3 id="runner-test-title">Test sarlavhasi</h3>
+          <div class="timer" id="quiz-timer">
+            <span>⏱️</span> <span id="timer-display">00:00</span>
+          </div>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-bar" id="quiz-progress-bar"></div>
+        </div>
+
+        <div class="card">
+          <div class="question-text" id="current-question-text">Savol matni shu yerda bo'ladi</div>
+          
+          <div class="options-list" id="current-options-list">
+            <!-- Buttons dynamically generated -->
+          </div>
+        </div>
+
+        <div class="quiz-navigation">
+          <button class="btn btn-secondary" id="btn-prev-question">Oldingisi</button>
+          <span style="font-weight: 600; color: var(--text-secondary);" id="question-index-display">Savol 1 / 10</span>
+          <button class="btn btn-primary" id="btn-next-question">Keyingisi</button>
+          <button class="btn btn-success" id="btn-submit-quiz" style="display: none; background: var(--success);">Tugatish</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. RESULTS VIEW (Student Results & Teacher Verification) -->
+    <section id="result-view" class="view-section">
+      <div class="card results-hero">
+        <h2 id="result-page-title">Test Natijalari</h2>
+        <p id="result-subtitle">O'quvchi: <strong id="result-student-name">...</strong></p>
+
+        <!-- Dynamic Circular Progress -->
+        <div class="score-circle-container">
+          <svg class="score-circle-svg" width="160" height="160">
+            <defs>
+              <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--primary)" />
+                <stop offset="100%" stop-color="var(--secondary)" />
+              </linearGradient>
+            </defs>
+            <circle class="score-circle-bg" cx="80" cy="80" r="70" />
+            <circle class="score-circle-fill" id="score-ring" cx="80" cy="80" r="70" />
+          </svg>
+          <div class="score-text">
+            <div class="score-percentage" id="score-percentage-text">0%</div>
+            <div class="score-fraction" id="score-fraction-text">0/0</div>
+          </div>
+        </div>
+
+        <!-- Detail Cards -->
+        <div class="results-grid">
+          <div class="result-stat-card">
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">To'g'ri javoblar</div>
+            <div class="result-stat-val success" id="result-correct-count">0</div>
+          </div>
+          <div class="result-stat-card">
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">Noto'g'ri javoblar</div>
+            <div class="result-stat-val error" id="result-incorrect-count">0</div>
+          </div>
+        </div>
+
+        <div id="student-sharing-actions">
+          <p>O'qituvchiga natijani yuborish uchun pastdagi havolani nusxalang yoki natija faylini yuklab olib jo'nating.</p>
+          <div class="share-link-container">
+            <input type="text" id="result-share-input" class="form-control share-link-input" readonly>
+            <button class="btn btn-primary btn-sm" id="btn-copy-result-link">Natija havolasini nusxalash</button>
+          </div>
+          <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+            <button class="btn btn-secondary btn-sm" style="flex: 1;" id="btn-download-result">Natijalarni yuklab olish (.json)</button>
+            <button class="btn btn-secondary btn-sm" style="flex: 1;" id="btn-restart-app">Bosh sahifaga qaytish</button>
+          </div>
+        </div>
+
+        <div id="teacher-view-actions" style="display: none; margin-top: 1rem;">
+          <p style="color: var(--success); font-weight: 500;">✓ Siz hozir o'quvchi yuborgan rasmiy natijani ko'ryapsiz.</p>
+          <button class="btn btn-secondary btn-block" id="btn-teacher-exit">Bosh sahifaga qaytish</button>
+        </div>
+      </div>
+
+      <!-- Question Review List -->
+      <div class="card">
+        <h3 class="review-section-title">Savollar tahlili</h3>
+        <div class="review-list" id="review-list-container">
+          <!-- Dynamically filled with reviewed questions -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
