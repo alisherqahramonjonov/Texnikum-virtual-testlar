@@ -57,7 +57,9 @@ Draggable.create(hitArea, {
 function toggleLamp() {
   isOn = !isOn;
 
-  clickSound.play();
+  try {
+    clickSound.play().catch(() => {});
+  } catch (e) {}
 
   body.setAttribute("data-on", isOn);
   root.style.setProperty("--on", isOn ? 1 : 0);

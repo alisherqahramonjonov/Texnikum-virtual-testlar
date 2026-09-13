@@ -18,6 +18,7 @@
       <nav id="main-nav">
         <button class="btn-nav active" data-target="home-view">Bosh sahifa</button>
         <button class="btn-nav" data-target="creator-view">O'qituvchi paneli</button>
+        <button class="btn-nav" data-target="dashboard-view" id="nav-dashboard">📊 Jurnal</button>
         <button class="btn-nav" data-target="runner-view" id="nav-runner" style="display: none;">Testni bajarish</button>
         <button class="btn-nav" data-target="result-view" id="nav-result" style="display: none;">Natija</button>
       </nav>
@@ -52,10 +53,18 @@
             <div class="option-icon">🎓</div>
             <h2>O'quvchi</h2>
             <p>O'qituvchi bergan havola orqali testlarni topshiring va o'z bilimingizni tekshiring.</p>
-            <div class="import-box" id="student-import-box" style="margin-top: 1rem; width: 100%;">
+            
+            <div style="display: flex; gap: 0.5rem; margin-top: 1rem; width: 100%;">
+              <input type="text" id="test-link-input" class="form-control" placeholder="Test havolasi yoki kodi (?test=...)">
+              <button class="btn btn-primary" id="btn-load-test-link" style="white-space: nowrap;">Boshlash</button>
+            </div>
+
+            <div style="text-align: center; margin: 0.75rem 0; color: var(--text-secondary); font-size: 0.85rem;">yoki</div>
+
+            <div class="import-box" id="student-import-box" style="width: 100%;">
               <div class="import-icon">📥</div>
-              <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">Test faylini yuklang (.json)</p>
-              <input type="file" id="file-test-import" class="file-input" accept=".json">
+              <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">Test faylini yuklang (.json, .docx, .xlsx)</p>
+              <input type="file" id="file-test-import" class="file-input" accept=".json,.docx,.xlsx,.xls">
               <button class="btn btn-secondary btn-sm" id="btn-select-test-file">Fayl tanlash</button>
             </div>
           </div>
@@ -84,7 +93,13 @@
     <section id="creator-view" class="view-section">
       <div class="creator-header">
         <h2>Yangi test yaratish</h2>
-        <button class="btn btn-secondary btn-sm" id="btn-clear-test">Tozalash</button>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <input type="file" id="file-doc-import" accept=".docx,.xlsx,.xls,.json" style="display: none;">
+          <button class="btn btn-primary btn-sm" id="btn-doc-import">📁 Fayldan yuklash (Word / Excel)</button>
+          <button class="btn btn-secondary btn-sm" id="btn-excel-template" title="Namunaviy Excel faylini yuklab olish">📥 Excel andoza</button>
+          <button class="btn btn-secondary btn-sm" id="btn-bulk-import">⚡ Matndan import</button>
+          <button class="btn btn-secondary btn-sm" id="btn-clear-test">Tozalash</button>
+        </div>
       </div>
 
       <!-- Test Metadata -->
@@ -103,6 +118,13 @@
         <div class="form-group">
           <label class="form-label" for="test-author">O'qituvchi ismi</label>
           <input type="text" id="test-author" class="form-control" placeholder="Ismingizni kiriting" value="O'qituvchi">
+        </div>
+        <!-- Shuffle toggle -->
+        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 0.5rem; border: 1px solid var(--border-color);">
+          <input type="checkbox" id="shuffle-questions" style="width:1.1rem; height:1.1rem; cursor:pointer; accent-color: var(--primary);">
+          <label for="shuffle-questions" style="cursor:pointer; color: var(--text-primary); font-weight:500; margin:0;">
+            🔀 Savollarni tasodifiy tartibda chiqarish (Shuffle)
+          </label>
         </div>
       </div>
 
@@ -140,7 +162,8 @@
           </div>
         </div>
 
-        <div style="text-align: right; margin-top: 1.5rem;">
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+          <button class="btn btn-secondary" id="btn-cancel-edit" style="display:none;">Bekor qilish</button>
           <button class="btn btn-primary" id="btn-add-question">Savolni ro'yxatga qo'shish</button>
         </div>
       </div>
@@ -162,9 +185,16 @@
           <input type="text" id="share-link-input" class="form-control share-link-input" readonly>
           <button class="btn btn-primary" id="btn-copy-link">Havolani nusxalash</button>
         </div>
+
+        <!-- QR Code -->
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <button class="btn btn-secondary btn-sm" id="btn-show-qr">📷 QR Kodni ko'rish</button>
+        </div>
         
-        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-          <button class="btn btn-secondary" style="flex: 1;" id="btn-download-test">Testni fayl sifatida yuklab olish (.json)</button>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-top: 1.5rem;">
+          <button class="btn btn-secondary btn-sm" id="btn-download-word">📘 Word (.doc) yuklab olish</button>
+          <button class="btn btn-secondary btn-sm" id="btn-download-excel">📗 Excel (.xlsx) yuklab olish</button>
+          <button class="btn btn-secondary btn-sm" id="btn-download-test">📦 JSON fayl yuklab olish</button>
         </div>
       </div>
 
@@ -173,6 +203,8 @@
         <button class="btn btn-primary btn-block" style="font-size: 1.1rem; padding: 1rem;" id="btn-generate-test">Testni yakunlash va havola yaratish</button>
       </div>
     </section>
+
+
 
     <!-- 3. STUDENT RUNNER VIEW -->
     <section id="runner-view" class="view-section">
@@ -200,6 +232,11 @@
 
         <div class="progress-container">
           <div class="progress-bar" id="quiz-progress-bar"></div>
+        </div>
+
+        <!-- Question Navigation Palette -->
+        <div class="question-palette" id="question-palette">
+          <!-- Dynamically filled -->
         </div>
 
         <div class="card">
@@ -261,15 +298,20 @@
             <input type="text" id="result-share-input" class="form-control share-link-input" readonly>
             <button class="btn btn-primary btn-sm" id="btn-copy-result-link">Natija havolasini nusxalash</button>
           </div>
-          <div style="margin-top: 1rem; display: flex; gap: 1rem;">
-            <button class="btn btn-secondary btn-sm" style="flex: 1;" id="btn-download-result">Natijalarni yuklab olish (.json)</button>
+          <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <button class="btn btn-secondary btn-sm" style="flex: 1;" id="btn-download-result">📄 Natijani yuklab olish (.docx)</button>
+            <button class="btn btn-secondary btn-sm" style="flex: 1;" id="btn-show-cert">🏆 Sertifikat</button>
+            <button class="btn btn-secondary btn-sm" style="flex: 1;" id="btn-show-result-qr">📷 QR Kod</button>
             <button class="btn btn-secondary btn-sm" style="flex: 1;" id="btn-restart-app">Bosh sahifaga qaytish</button>
           </div>
         </div>
 
         <div id="teacher-view-actions" style="display: none; margin-top: 1rem;">
           <p style="color: var(--success); font-weight: 500;">✓ Siz hozir o'quvchi yuborgan rasmiy natijani ko'ryapsiz.</p>
-          <button class="btn btn-secondary btn-block" id="btn-teacher-exit">Bosh sahifaga qaytish</button>
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <button class="btn btn-secondary btn-sm btn-block" style="flex:1;" id="btn-teacher-exit">Bosh sahifaga qaytish</button>
+            <button class="btn btn-secondary btn-sm" style="flex:1;" id="btn-teacher-show-cert">🏆 Sertifikat</button>
+          </div>
         </div>
       </div>
 
@@ -282,8 +324,139 @@
       </div>
     </section>
 
+    <!-- 5. DASHBOARD VIEW -->
+    <section id="dashboard-view" class="view-section">
+      <div class="card">
+        <h2 style="margin-bottom: 0.5rem;">📊 O'quvchilar natijalari jurnali</h2>
+        <p>O'qituvchi sifatida tekshirgan barcha natijalar shu yerda saqlanadi.</p>
+
+        <!-- Stats summary -->
+        <div class="stats-grid" id="dashboard-stats">
+          <div class="result-stat-card">
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">Jami natijalar</div>
+            <div class="result-stat-val" id="stat-total">0</div>
+          </div>
+          <div class="result-stat-card">
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">O'rtacha ball</div>
+            <div class="result-stat-val" id="stat-avg">—</div>
+          </div>
+          <div class="result-stat-card">
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">Eng yuqori</div>
+            <div class="result-stat-val success" id="stat-max">—</div>
+          </div>
+          <div class="result-stat-card">
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">Eng past</div>
+            <div class="result-stat-val error" id="stat-min">—</div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+          <button class="btn btn-primary btn-sm" id="btn-export-csv">📥 CSV yuklab olish</button>
+          <button class="btn btn-secondary btn-sm" id="btn-clear-journal">🗑 Jurnalni tozalash</button>
+        </div>
+
+        <!-- Table -->
+        <div class="journal-table-wrap">
+          <table class="journal-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>O'quvchi ismi</th>
+                <th>Test nomi</th>
+                <th>To'g'ri</th>
+                <th>Jami</th>
+                <th>Ball (%)</th>
+                <th>Sana va vaqt</th>
+              </tr>
+            </thead>
+            <tbody id="journal-tbody">
+              <tr><td colspan="7" style="text-align:center; color: var(--text-secondary); padding: 2rem;">Hali hech qanday natija saqlanmagan.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
   </main>
 
+  <!-- === MODALS === -->
+
+  <!-- Bulk Import Modal -->
+  <div class="modal-overlay" id="bulk-import-modal">
+    <div class="modal-box" style="max-width: 620px;">
+      <button class="modal-close" id="close-bulk-modal">✕</button>
+      <h3 style="margin-bottom: 0.5rem;">⚡ Tezkor matndan savollarni yuklash</h3>
+      <div style="background: rgba(139, 92, 246, 0.1); border: 1px dashed var(--primary); border-radius: 0.5rem; padding: 0.75rem 1rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
+        <span style="font-size: 0.85rem; color: var(--text-primary);">💡 Word (.docx) yoki Excel (.xlsx) faylingiz bormi?</span>
+        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('close-bulk-modal').click(); document.getElementById('btn-doc-import').click();">Faylni tanlash</button>
+      </div>
+      <p style="font-size: 0.9rem; margin-bottom: 1rem;">Quyidagi formatda matn kiriting. To'g'ri javob yoniga <code style="background: rgba(255,255,255,0.1); padding: 1px 5px; border-radius: 3px;">*</code> qo'ying:</p>
+      <pre style="background: rgba(0,0,0,0.3); border-radius: 0.5rem; padding: 1rem; font-size: 0.8rem; color: #9ca3af; margin-bottom: 1rem; overflow-x: auto;">1. O'zbekiston poytaxti?
+A) Samarqand
+B*) Toshkent
+C) Buxoro
+D) Xiva
+
+2. 2+2=?
+A*) 4
+B) 3
+C) 5
+D) 6</pre>
+      <textarea id="bulk-text-input" class="form-control" rows="10" placeholder="Matnni shu yerga yapishtirib, Import tugmasini bosing..."></textarea>
+      <div style="display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: flex-end;">
+        <button class="btn btn-secondary" id="close-bulk-modal-btn">Bekor qilish</button>
+        <button class="btn btn-primary" id="btn-do-bulk-import">⚡ Importni boshlash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div class="modal-overlay" id="qr-modal">
+    <div class="modal-box" style="max-width: 380px; text-align: center;">
+      <button class="modal-close" id="close-qr-modal">✕</button>
+      <h3 style="margin-bottom: 0.5rem;">📷 QR Kod</h3>
+      <p id="qr-modal-label" style="font-size: 0.9rem; margin-bottom: 1.5rem;">Smartfoningiz kamerasi bilan skaner qiling</p>
+      <div id="qr-code-container" style="display: flex; justify-content: center; margin-bottom: 1.5rem; background: white; padding: 1rem; border-radius: 0.5rem;">
+        <!-- QR code rendered here -->
+      </div>
+      <button class="btn btn-secondary btn-print-hide" id="btn-download-qr">⬇ QR ni yuklab olish</button>
+    </div>
+  </div>
+
+  <!-- Certificate Modal -->
+  <div class="modal-overlay" id="certificate-modal">
+    <div class="modal-box" style="max-width: 640px;">
+      <button class="modal-close btn-print-hide" id="close-cert-modal">✕</button>
+      <div class="certificate-card" id="certificate-content">
+        <div class="cert-title">SERTIFIKAT</div>
+        <div class="cert-subtitle">Smart Test Hub — Muvaffaqiyatli topshirish tasdiqi</div>
+        <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">Ushbu sertifikat</p>
+        <div class="cert-name" id="cert-student-name">O'quvchi ismi</div>
+        <div class="cert-details" id="cert-details">
+          <strong id="cert-test-name">Test nomi</strong> testini muvaffaqiyatli topshirdi.<br>
+          Natija: <strong id="cert-score">0/0</strong> — <strong id="cert-percent">0%</strong>
+        </div>
+        <div class="cert-footer">
+          <span>O'qituvchi: <strong id="cert-author">—</strong></span>
+          <span id="cert-date">—</span>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 1.5rem;" class="btn-print-hide">
+        <button class="btn btn-primary" onclick="window.print()">🖨 Chop etish / PDF saqlash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous"></script>
+  <!-- Mammoth JS (Word .docx fayllarni o'qish uchun) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js" crossorigin="anonymous"></script>
+  <!-- SheetJS (Excel .xlsx/.xls fayllarni o'qish va yozish uchun) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" crossorigin="anonymous"></script>
+  <!-- LZ-String (Havolalarni bir necha barobar qisqartirish uchun) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js" crossorigin="anonymous"></script>
   <script src="app.js"></script>
 </body>
 </html>
+
